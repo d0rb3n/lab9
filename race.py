@@ -15,7 +15,7 @@ white = (255, 255, 255)
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 SPEED = 5
-SPEED2 = 5
+SPEED2 = 5 #coin speed
 SCORE = 0
 
 # Fonts
@@ -48,8 +48,8 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.top = 0
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
             # Check if score is a multiple of 10
-            if SCORE % 10 == 0:
-                self.speed += 1  # Increase speed by 1 when score is a multiple of 10
+            if SCORE % 15 == 0:
+                self.speed += 0.5  # Increase speed by 0.5 when score is a multiple of 15
 
 
 # Player car
@@ -79,9 +79,9 @@ class Coin(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(image, def_img_size)
         self.rect = self.image.get_rect()
         self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
-
+        self.speed = SPEED2
     def move(self):
-        self.rect.move_ip(0, SPEED2)
+        self.rect.move_ip(0, self.speed)
         if (self.rect.top > 600):
             self.rect.top = 0
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
@@ -106,8 +106,6 @@ all_sprites.add(C1)
 INC_SPEED = pygame.USEREVENT + 1
 pygame.time.set_timer(INC_SPEED, 1000)
 
-INC_SPEED2 = pygame.USEREVENT + 1
-pygame.time.set_timer(INC_SPEED, 200)
 
 # New user event for spawning coins
 SPAWN_COIN = pygame.USEREVENT + 2
@@ -132,8 +130,6 @@ while True:
             spawn_coin()
         if event.type == INC_SPEED:
             SPEED += 0.5
-        if event.type == INC_SPEED2:
-            SPEED2 += 0.5
 
     DISPLAYSURF.blit(background, (0, 0))
     scores = font_small.render(str(SCORE), True, white)
@@ -147,7 +143,7 @@ while True:
     # Hitting the coin
     if pygame.sprite.spritecollide(P1, coins, True):
         pygame.mixer.Sound('catch.mp3').play()
-        SCORE += 10
+        SCORE += 5
 
     # Hitting the car
     if pygame.sprite.spritecollideany(P1, enemies):
