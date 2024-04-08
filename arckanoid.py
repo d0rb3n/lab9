@@ -7,7 +7,7 @@ FPS = 80
 #acceleration factor
 acc = 0.00001
 
-screen = pygame.display.set_mode((W, H), pygame.RESIZABLE)
+screen = pygame.display.set_mode((W, H))
 clock = pygame.time.Clock()
 done = False
 bg = (0, 0, 0)
@@ -63,10 +63,11 @@ block_list = [pygame.Rect(10 + 120 * i, 50 + 70 * j,
 color_list = [(random.randrange(0, 255), 
     random.randrange(0, 255),  random.randrange(0, 255))
               for i in range(10) for j in range(4)] 
-unbreakable_list = [pygame.Rect(10 + 250 * i, 350 + 30*j,
-         100, 50) for i in range(5) for j in range (1)]
-unbreakable_color = [(255, 255, 255) for i in range(5) for j in range(1)]
-print(block_list)
+unbreakable_list = [pygame.Rect(20 + 350 * i, 350 + 30*j,
+         100, 50) for i in range(4) for j in range (1)]
+unbreakable_color = [(0, 0, 0) for i in range(4) for j in range(1)]
+# print(block_list)
+
 #Game over Screen
 losefont = pygame.font.SysFont('comicsansms', 40)
 losetext = losefont.render('Game Over', True, (255, 255, 255))
@@ -89,10 +90,10 @@ while not done:
     
     [pygame.draw.rect(screen, color_list[color], block)
      for color, block in enumerate (block_list)] #drawing blocks
-    [pygame.draw.rect(screen, pygame.Color(255, 255, 255), unbreakable)
-     for color, unbreakable in enumerate (unbreakable_list)]
+    [pygame.draw.rect(screen, pygame.Color(255, 0, 0), unbreakable)
+     for color, unbreakable in enumerate (unbreakable_list)] #drawing unbreakable blocks
     pygame.draw.rect(screen, pygame.Color(255, 255, 255), paddle)
-    pygame.draw.circle(screen, pygame.Color(255, 0, 0), ball.center, ballRadius)
+    pygame.draw.circle(screen, pygame.Color(255, 255, 255), ball.center, ballRadius)
 
     #Ball movement
     ballacc = acc * FPS
