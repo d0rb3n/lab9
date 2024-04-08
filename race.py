@@ -48,8 +48,8 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.top = 0
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
             # Check if score is a multiple of 10
-            if SCORE % 15 == 0:
-                self.speed += 0.5  # Increase speed by 0.5 when score is a multiple of 15
+            if SCORE % 10 == 0:
+                self.speed += 0.5  # Increase speed by 0.5 when score is a multiple of 10
 
 
 # Player car
@@ -86,30 +86,53 @@ class Coin(pygame.sprite.Sprite):
             self.rect.top = 0
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
 
+#coin2 / super
+class Coin2(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        image = pygame.image.load('coin2.png')
+        def_img_size = (50, 50)
+        self.image = pygame.transform.scale(image, def_img_size)
+        self.rect = self.image.get_rect()
+        self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
+        self.speed = SPEED2
+    def move(self):
+        self.rect.move_ip(0, self.speed)
+        if (self.rect.top > 600):
+            self.rect.top = 0
+            self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
+
 
 # Setting up Sprites
 P1 = Player()
 E1 = Enemy()
 C1 = Coin()
+C2 = Coin2()
 
 # Creating Sprites Groups
 enemies = pygame.sprite.Group()
 enemies.add(E1)
 coins = pygame.sprite.Group()
 coins.add(C1)
+coins2 = pygame.sprite.Group()
+coins2.add(C2)
 all_sprites = pygame.sprite.Group()
 all_sprites.add(P1)
 all_sprites.add(E1)
 all_sprites.add(C1)
+all_sprites.add(C2)
 
 # Increasing speed
 INC_SPEED = pygame.USEREVENT + 1
 pygame.time.set_timer(INC_SPEED, 1000)
 
-
 # New user event for spawning coins
 SPAWN_COIN = pygame.USEREVENT + 2
 pygame.time.set_timer(SPAWN_COIN, 5000)
+
+#new user event for spawning super coins
+SPAWN_COIN2 = pygame.USEREVENT + 3
+pygame.time.set_timer(SPAWN_COIN2, 13000)
 
 
 # Spawning new coins
@@ -117,7 +140,11 @@ def spawn_coin():
     new_coin = Coin()
     coins.add(new_coin)
     all_sprites.add(new_coin)
-
+#spawn super coin
+def spawn_coin2():
+    new_coin2 = Coin2()
+    coins.add(new_coin2)
+    all_sprites.add(new_coin2)
 
 # Game Loop
 while True:
@@ -128,6 +155,8 @@ while True:
             sys.exit()
         if event.type == SPAWN_COIN:
             spawn_coin()
+        if event.type == SPAWN_COIN2:
+            spawn_coin2()
         if event.type == INC_SPEED:
             SPEED += 0.5
 
@@ -144,6 +173,11 @@ while True:
     if pygame.sprite.spritecollide(P1, coins, True):
         pygame.mixer.Sound('catch.mp3').play()
         SCORE += 5
+    
+    #hitting the super coin
+    if pygame.sprite.spritecollide(P1,coins2, True):
+        pygame.mixer.Sound('catch.mp3').play()
+        SCORE += 10
 
     # Hitting the car
     if pygame.sprite.spritecollideany(P1, enemies):
