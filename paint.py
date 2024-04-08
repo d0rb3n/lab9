@@ -1,7 +1,7 @@
 import pygame
-import random
+import math
 
-#drawing lines
+# Function to draw lines
 def draw_line(screen, start, end, width, color):
     x1 = start[0]
     y1 = start[1]
@@ -15,14 +15,14 @@ def draw_line(screen, start, end, width, color):
     B = x1 - x2
     C = x2 * y1 - x1 * y2
 
-    if dx>dy:
+    if dx > dy:
         if x1 > x2:
             x1, x2 = x2, x1
             y1, y2 = y2, y1
 
         for x in range(x1, x2):
-            y = (-C - A * x)/B
-            pygame.draw.circle(screen, color, (x, y), width)
+            y = (-C - A * x) / B
+            pygame.draw.circle(screen, color, (x, round(y)), width)
 
     else:
         if y1 > y2:
@@ -30,38 +30,59 @@ def draw_line(screen, start, end, width, color):
             y1, y2 = y2, y1
 
         for y in range(y1, y2):
-            x = (-C - B * y)/A
-            pygame.draw.circle(screen, color, (x, y), width)
+            x = (-C - B * y) / A
+            pygame.draw.circle(screen, color, (round(x), y), width)
 
-#draw rectangle
+# Function to draw a rectangle
 def draw_rect(screen, pos, color, a):
     x1 = pos[0]
     y1 = pos[1]
 
-    print(pos)
     pygame.draw.rect(screen, color, (x1, y1, a, a), 5)
 
-#draw circle
+# Function to draw a circle
 def draw_circ(screen, pos, color, radius):
-    x = pos[0]
-    y = pos[1]
-
     pygame.draw.circle(screen, color, pos, radius, 5)
 
+# Function to draw a right triangle
+def draw_right_triangle(screen, pos, color, base, height):
+    x1 = pos[0]
+    y1 = pos[1]
+
+    pygame.draw.polygon(screen, color, [(x1, y1), (x1 + base, y1), (x1, y1 + height)], 5)
+
+# Function to draw an equilateral triangle
+def draw_equilateral_triangle(screen, pos, color, side_length):
+    height = math.sqrt(3) * side_length / 2  # Calculate height of equilateral triangle
+    x1 = pos[0]
+    y1 = pos[1]
+
+    pygame.draw.polygon(screen, color, [(x1, y1 + height), (x1 + side_length, y1 + height), (x1 + side_length / 2, y1)], 5)
+
+# Function to draw a rhombus
+def draw_rhombus(screen, pos, color, diagonal_1, diagonal_2):
+    x1 = pos[0]
+    y1 = pos[1]
+
+    pygame.draw.polygon(screen, color, [(x1, y1), (x1 + diagonal_1 / 2, y1 + diagonal_2 / 2),
+                                         (x1 + diagonal_1, y1), (x1 + diagonal_1 / 2, y1 - diagonal_2 / 2)], 5)
+
+
 def main():
-    screen = pygame.display.set_mode((800, 600))
+    pygame.init()
+    screen = pygame.display.set_mode((1000, 800))
     mode = 'random'
     draw_on = False
     last_pos = {0, 0}
     color = (255, 128, 0)
     radius = 10
 
-#colors
+    # colors
     colors = {
-        'red' : (255, 0, 0),
-        'blue' : (0, 0, 255),
-        'green' : (0, 255, 0),
-        'eraser' : (255, 255, 255)
+        'red': (255, 0, 0),
+        'blue': (0, 0, 255),
+        'green': (0, 255, 0),
+        'eraser': (255, 255, 255)
     }
 
     screen.fill((255, 255, 255))
@@ -85,33 +106,45 @@ def main():
                 if event.key == pygame.K_z:
                     mp = pygame.mouse.get_pos()
                     draw_rect(screen, mp, color, radius*10)
-                #x draw circles
+                # x draw circles
                 if event.key == pygame.K_x:
                     mp = pygame.mouse.get_pos()
                     draw_circ(screen, mp, color, radius*5)
-                #if press e eraser
+                # c draw right triangle
+                if event.key == pygame.K_c:
+                    mp = pygame.mouse.get_pos()
+                    draw_right_triangle(screen, mp, color, 100, 100)
+                # v draw rhombus
+                if event.key == pygame.K_v:
+                    mp = pygame.mouse.get_pos()
+                    draw_rhombus(screen, mp, color, 100, 100)
+                #n draw eq triangle
+                if event.key == pygame.K_n:
+                    mp = pygame.mouse.get_pos()
+                    draw_equilateral_triangle(screen, mp, color, 100)
+                # if press e eraser
                 if event.key == pygame.K_e:
                     mode = 'eraser'
-                #press r get red
+                # press r get red
                 if event.key == pygame.K_r:
                     mode = 'red'
-                #press b get blue
+                # press b get blue
                 if event.key == pygame.K_b:
                     mode = 'blue'
-                #press g get green
+                # press g get green
                 if event.key == pygame.K_g:
                     mode = 'green'
-                #brush wider
+                # brush wider
                 if event.key == pygame.K_UP:
                     radius += 1
-                #brush shrinker
+                # brush shrinker
                 if event.key == pygame.K_DOWN:
                     radius -= 1
 
-                #draw random color lines
+                # draw random color lines
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if mode == 'random':
-                    color = (0,0,0)
+                    color = (0, 0, 0)
                 else:
                     color = colors[mode]
                 pygame.draw.circle(screen, color, event.pos, radius)
@@ -125,6 +158,5 @@ def main():
 
         pygame.display.flip()
 
-    pygame.quit()
-
-main()
+if __name__ == "__main__":
+    main()
